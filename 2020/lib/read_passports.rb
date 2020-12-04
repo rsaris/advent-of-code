@@ -12,7 +12,7 @@ class Passport
     :country_id,
   )
 
-  def valid?
+  def presence_valid?
     !!(birth_year &&
       issue_year &&
       exp_year &&
@@ -21,6 +21,30 @@ class Passport
       eye_color &&
       passport_id
     )
+  end
+
+  def format_valid?
+    return false unless presence_valid?
+
+    return false if birth_year.to_i < 1920 || birth_year.to_i > 2002
+    return false if issue_year.to_i < 2010 || issue_year.to_i > 2020
+    return false if exp_year.to_i < 2020 || exp_year.to_i > 2030
+
+    if height.include?('cm')
+      cm_height = height.gsub('cm', '').to_i
+      return false if cm_height < 150 || cm_height > 193
+    elsif height.include?('in')
+      in_height = height.gsub('in', '').to_i
+      return false if in_height < 59 || in_height > 76
+    else
+      return false
+    end
+
+    return false unless hair_color.match?(/\A\#[0-9|a-f]{6}\z/)
+    return false unless ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].include?(eye_color)
+    return false unless passport_id.match?(/\A[0-9]{9}\z/)
+
+    true
   end
 end
 
