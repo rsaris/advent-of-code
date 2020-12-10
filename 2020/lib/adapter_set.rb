@@ -4,11 +4,12 @@ class AdapterSet
   attr_reader :adapters
 
   def initialize(file_name)
-    @adapters = read_inputs('day-10.txt', map_method: :to_i).sort!
+    @adapters = read_inputs(file_name, map_method: :to_i).sort!
   end
 
-  def longest_chain
-    @adapters
+  def num_chains
+    @chain_memo = {}
+    chains_available(adapters.unshift(0))
   end
 
   def diff_map(chain)
@@ -33,5 +34,23 @@ class AdapterSet
 
       acc
     end
+  end
+
+  private
+
+  def chains_available(chain)
+    current_value = chain[0]
+    return @chain_memo[current_value] if @chain_memo[current_value]
+
+    num_chains =
+      if chain.size <= 1
+        1
+      else
+        chains_available(chain[1..-1]) +
+          ((chain.size > 2 && chain[2] - current_value <= 3) ? chains_available(chain[2..-1]) : 0) +
+          ((chain.size > 3 && chain[3] - current_value <= 3) ? chains_available(chain[3..-1]) : 0)
+      end
+
+    @chain_memo[current_value] = num_chains
   end
 end
