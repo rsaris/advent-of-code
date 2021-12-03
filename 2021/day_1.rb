@@ -1,5 +1,7 @@
-def read_depths(file_name)
-  File.open("./inputs/#{file_name}").read.split("\n").map(&:to_i)
+require_relative 'lib/read_file'
+
+def read_depths
+  read_file('day_1.txt') { |line| line.to_i }
 end
 
 def build_depth_groups(depths, size = 3)
@@ -11,11 +13,11 @@ def count_increases(depths)
 end
 
 def do_part_1
-  puts count_increases(read_depths('day_1.txt'))
+  puts count_increases(read_depths)
 end
 
 def do_part_2
-  puts count_increases(build_depth_groups(read_depths('day_1.txt')))
+  puts count_increases(build_depth_groups(read_depths))
 end
 
 puts 'PART 1'
