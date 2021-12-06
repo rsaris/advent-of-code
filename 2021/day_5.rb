@@ -1,13 +1,21 @@
 require_relative 'lib/read_file'
 
 class VentLine
-  attr_reader :x1, :y1, :x2, :y2
+  attr_reader(
+    :x1,
+    :y1,
+    :x2,
+    :y2,
+    :skip_diagonal,
+  )
 
-  def initialize(x1, y1, x2, y2)
+  def initialize(x1, y1, x2, y2, skip_diagonal: false)
     @x1 = x1
     @y1 = y1
     @x2 = x2
     @y2 = y2
+
+    @skip_diagonal = skip_diagonal
   end
 
   def points
@@ -31,6 +39,20 @@ class VentLine
             (x2..x1)
           end
         range.map { |x| { x: x, y: y1 } }
+      elsif !skip_diagonal
+        x_range, y_range =
+          if x1 < x2
+            [
+              (x1..x2),
+              y1 < y2 ? (y1..y2).to_a : (y2..y1).to_a.reverse,
+            ]
+          else
+            [
+              (x2..x1),
+              y2 < y1 ? (y2..y1).to_a : (y1..y2).to_a.reverse,
+            ]
+          end
+        x_range.each_with_index.map { |x, i| { x: x, y: y_range[i] }}
       else
         []
       end
@@ -39,14 +61,21 @@ class VentLine
 
   def print_line
     puts "(#{x1}, #{y1}) -> (#{x2}, #{y2})"
-    points.each { |point| puts "(#{point[:x]}, #{point[:y]}" }
+    points.each { |point| puts "(#{point[:x]}, #{point[:y]})" }
   end
 end
 
 class VentMap
-  attr_reader :lines, :map, :max_row
+  attr_reader(
+    :lines,
+    :map,
+    :max_row,
+    :skip_diagonal,
+  )
 
-  def initialize(inputs, debug: false)
+  def initialize(inputs, debug: false, skip_diagonal: false)
+    @skip_diagonal = skip_diagonal
+
     @lines = parse_inputs(inputs)
     @map = build_map
     @max_row = @map.map { |row| row&.length.to_i }.max
@@ -104,6 +133,7 @@ class VentMap
         match['y1'].to_i,
         match['x2'].to_i,
         match['y2'].to_i,
+        skip_diagonal: @skip_diagonal
       )
     end
   end
@@ -111,9 +141,19 @@ end
 
 def do_part_1
   inputs = read_file('day_5.txt')
-  vent_map = VentMap.new(inputs)
+  vent_map = VentMap.new(inputs, skip_diagonal: true)
+  puts vent_map.num_points_above_threshold(2)
+end
+
+
+def do_part_2
+  inputs = read_file('day_5.txt')
+  vent_map = VentMap.new(inputs, debug: true)
   puts vent_map.num_points_above_threshold(2)
 end
 
 puts 'PART 1'
 do_part_1 # 5167
+
+puts 'PART 2'
+do_part_2 # 17604
