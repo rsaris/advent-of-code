@@ -118,5 +118,30 @@ def do_part_1
   end
 end
 
+def do_part_2
+  debug = false
+
+  inputs = read_file('day_4.txt')
+  numbers_to_call, boards = parse_inputs(inputs, debug: debug)
+
+  numbers_to_call.each do |number_to_call|
+    puts "DEBUG Calling #{number_to_call}" if debug
+
+    if boards.size == 1
+      last_board = boards.first
+      if last_board.call_number(number_to_call)
+        unmarked_numbers = last_board.all_numbers - last_board.called_numbers
+        puts unmarked_numbers.sum * number_to_call
+        return
+      end
+    else
+      boards.reject! { |board| board.call_number(number_to_call) }
+    end
+  end
+end
+
 puts 'Part 1'
 do_part_1 # 45031
+
+puts 'Part 2'
+do_part_2 # 2568
