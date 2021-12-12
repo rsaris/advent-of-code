@@ -17,14 +17,20 @@ class OctopusGrid
       end
     end
 
+    num_flashes_this_step = 0
+
     (0..grid.size - 1).each do |row_index|
       (0..grid[row_index].size - 1).each do |col_index|
         if grid[row_index][col_index] == 10
-          @num_flashes += 1
+          num_flashes_this_step += 1
           grid[row_index][col_index] = 0
         end
       end
     end
+
+    @num_flashes += num_flashes_this_step
+
+    num_flashes_this_step == grid.size * grid[0].size
   end
 
   private
@@ -81,12 +87,17 @@ class OctopusGrid
   end
 end
 
-def do_part_1
-  debug = false
+def build_grid(debug)
   grid = OctopusGrid.new(read_grid(debug ? 'day_11.debug.txt' : 'day_11.txt'), debug: debug)
   puts '--- INITIAL GRID ---' if debug
   puts print_grid(grid.grid) if debug
 
+  grid
+end
+
+def do_part_1
+  debug = false
+  grid = build_grid(debug)
 
   (debug ? 10 : 100).times do |index|
     grid.run_step
@@ -98,5 +109,21 @@ def do_part_1
   puts grid.num_flashes
 end
 
+def do_part_2
+  debug = false
+  grid = build_grid(debug)
+
+  cur_step = 1
+  until grid.run_step
+    puts "Running step #{cur_step}" if debug
+    cur_step += 1
+  end
+
+  puts cur_step
+end
+
 puts 'PART 1'
 do_part_1 # 1700
+
+puts 'PART 2'
+do_part_2 # 273
