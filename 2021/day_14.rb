@@ -1,8 +1,8 @@
 require 'pry'
 require_relative 'lib/read_file'
 
-def do_part_1
-  debug = false
+def do_it(num_steps)
+  debug = true
   template = nil
   insertion_map = {}
 
@@ -19,7 +19,8 @@ def do_part_1
   end
 
   cur_state = template.split('')
-  10.times do
+  num_steps.times do |i|
+    puts "Running step #{i}" if debug
     next_state = []
 
     cur_state.each_with_index do |val, index|
@@ -28,7 +29,6 @@ def do_part_1
     end
 
     cur_state = next_state
-    puts cur_state.join('') if debug
   end
 
   tally = cur_state.tally
@@ -36,5 +36,16 @@ def do_part_1
   puts inverted_tally.keys.max - inverted_tally.keys.min
 end
 
+def do_part_1
+  do_it(10)
+end
+
+def do_part_2
+  do_it(40)
+end
+
 puts 'PART 1'
 do_part_1 # 2027
+
+puts 'PART 2'
+do_part_2 #
