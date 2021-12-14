@@ -19,7 +19,6 @@ class Cave
   end
 
   def paths_to_end(path: [], num_stops: 1)
-    # binding.pry
     return [Array.new(path) << self] if name == 'end'
     return [] if path.any? && name == 'start'
 
