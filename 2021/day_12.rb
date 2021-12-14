@@ -10,26 +10,30 @@ class Cave
     @name = name
   end
 
-  def big?
-    @name.match(/[A-Z]+/)
+  def small?
+    @name.match(/[a-z]+/)
   end
 
   def add_link(cave)
     @links.add(cave)
   end
 
-  def paths_to_end(path = [])
+  def paths_to_end(path: [], num_stops: 1)
     # binding.pry
     return [Array.new(path) << self] if name == 'end'
+    return [] if path.any? && name == 'start'
 
-    @links.reduce([]) do |acc, link|
-      caves_to_ignore = Set.new(path.reject(&:big?))
+    if small? &&
+        path.select(&:small?).map(&:name).tally.invert[num_stops] &&
+        Set.new(path).include?(self)
+      return []
+    end
 
-      unless caves_to_ignore.include?(link)
-        acc.concat(link.paths_to_end(Array.new(path) << self))
-      end
-
-      acc
+    @links.flat_map do |link|
+      link.paths_to_end(
+        path: Array.new(path) << self,
+        num_stops: num_stops,
+      )
     end
   end
 end
@@ -49,8 +53,8 @@ class Graph
     end
   end
 
-  def paths
-    @caves['start'].paths_to_end
+  def paths(num_stops = 1)
+    @caves['start'].paths_to_end(num_stops: num_stops)
   end
 end
 
@@ -59,5 +63,13 @@ def do_part_1
   puts graph.paths.size
 end
 
+
+def do_part_2
+  puts Graph.new.paths(2).size
+end
+
 puts 'PART 1'
 do_part_1 # 3887
+
+puts 'PART 2'
+do_part_2 # 104834
