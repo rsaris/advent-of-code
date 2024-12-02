@@ -1,6 +1,6 @@
 const { readFileSync } = require('node:fs');
 
-async function parseInput() {
+function parseInput() {
   const content = readFileSync(
     './inputs/day_1.txt',
     { encoding: 'utf8', flag: 'r' },
@@ -19,8 +19,8 @@ async function parseInput() {
   return [leftArray.sort(), rightArray.sort()];
 }
 
-async function part1() {
-  const [leftArray, rightArray] = await parseInput();
+function part1() {
+  const [leftArray, rightArray] = parseInput();
 
   let count = 0;
   for (let i = 0; i < leftArray.length; i++) {
@@ -30,8 +30,8 @@ async function part1() {
   console.log(count);
 }
 
-async function part2() {
-  const [leftArray, rightArray] = await parseInput();
+ function part2() {
+  const [leftArray, rightArray] = parseInput();
 
   let score = 0;
   leftArray.forEach(leftNum => {

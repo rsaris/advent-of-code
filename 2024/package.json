@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "day1": "ts-node ./day_1.ts"
+    "day": "ts-node ./day_${0}.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.2",
