@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "day": "ts-node ./day_${0}.ts"
+    "day": "ts-node -O '{\"module\": \"commonjs\"}' ./day_${0}.ts"
   },
   "dependencies": {
     "ts-node": "^10.9.2",
