@@ -50,15 +50,21 @@ function isSafe(row: number[], withDampner = false): boolean {
     if (row[0] === row[1]) {
       // If the first element is the same as the second, remove one and move on
       foundBaddy = true;
-      i = i;
-      isRising == row[1] < row[2];
+      i = 1;
+      isRising = row[1] < row[2];
     } else if (isRising !== row[1] < row[2]) {
       // 0 => 1 is not the same as 1 => 2 see if we can remove one to make the rest
       // make sense
 
+
+
       foundBaddy = true;
       i = 1;
       isRising = !isRising;
+    } else if (!compareCells(row[0], row[1], isRising)) {
+      foundBaddy = true;
+      i = 1;
+      isRising = row[1] < row[2];
     }
   }
 
@@ -113,6 +119,10 @@ function part2() {
       if (isSafeNaive(row)) { return acc + 1; }
       for(var i = 0; i < row.length; i++) {
         if (isSafeNaive([...row.slice(0, i), ...row.slice(i + 1, row.length)])) {
+          if (!isSafe(row, true)) {
+            console.log(`${i}: ${row.join(', ')}`);
+          }
+
           return acc + 1;
         }
       }
