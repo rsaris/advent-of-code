@@ -2,6 +2,8 @@ const { readFileSync } = require('node:fs');
 
 class Matrix {
   _data: string[][];
+
+  // Day 6
   _curX: number;
   _curY: number;
   _dirX: number;
@@ -14,6 +16,10 @@ class Matrix {
       },
     },
   };
+
+  // Day 8
+  _antenna: { [key: string]: [number, number][] };
+  _antinodes: { [key: number]: Set<number> };
 
   constructor(day: number) {
     const input = readFileSync(
@@ -41,7 +47,7 @@ class Matrix {
           printData[y][x] = '^';
         } else if (this._curX === x && this._curY === y) {
           printData[y][x] = 'P';
-        } else if (this._spaces[y]?.has(x)) {
+        } else if (this._spaces && this._spaces[y]?.has(x)) {
           printData[y][x] = 'X';
         } else {
           printData[y][x] = this._data[y][x];
@@ -282,6 +288,100 @@ class Matrix {
     );
 
     return validCount;
+  }
+
+  // DAY 8
+  start2(method = 1) {
+    this._antenna = {};
+    this._antinodes = {};
+    for (var y = 0; y < this._data.length; y++) {
+      for (var x = 0; x < this._data[y].length; x++) {
+        if (this._data[y][x] !== '.') {
+          this._antenna[this._data[y][x]] ||= [];
+          this._antenna[this._data[y][x]].push([x, y]);
+        }
+      }
+    }
+
+    const maxY = this._data.length - 1;
+    const maxX = this._data[1].length - 1;
+
+    Object.entries(this._antenna).forEach(([key, antenna]) => {
+      for (var i = 0; i < antenna.length; i++) {
+        for (var j = i + 1; j < antenna.length; j++) {
+          const deltaX = antenna[j][0] - antenna[i][0];
+          const deltaY = antenna[j][1] - antenna[i][1];
+
+          if (method === 2) {
+            let possibleAntinode =
+              [antenna[i][0] + deltaX, antenna[i][1] + deltaY];
+            while (
+              possibleAntinode[0] >= 0 &&
+              possibleAntinode[0] <= maxX &&
+              possibleAntinode[1] >= 0 &&
+              possibleAntinode[1] <= maxY
+            ) {
+              this._antinodes[possibleAntinode[0]] ||= new Set();
+              this._antinodes[possibleAntinode[0]].add(possibleAntinode[1])
+              possibleAntinode =
+                [possibleAntinode[0] + deltaX, possibleAntinode[1] + deltaY];
+            }
+
+            possibleAntinode =
+              [antenna[j][0] - deltaX, antenna[j][1] - deltaY];
+            while (
+              possibleAntinode[0] >= 0 &&
+              possibleAntinode[0] <= maxX &&
+              possibleAntinode[1] >= 0 &&
+              possibleAntinode[1] <= maxY
+            ) {
+              this._antinodes[possibleAntinode[0]] ||= new Set();
+              this._antinodes[possibleAntinode[0]].add(possibleAntinode[1])
+              possibleAntinode =
+                [possibleAntinode[0] - deltaX, possibleAntinode[1] - deltaY];
+            }
+          } else {
+            const firstPossible=
+              [antenna[j][0] + deltaX, antenna[j][1] + deltaY];
+            const secondPossible =
+              [antenna[i][0] - deltaX, antenna[i][1] - deltaY];
+
+            if (
+              firstPossible[0] >= 0 &&
+              firstPossible[0] <= maxX &&
+              firstPossible[1] >= 0 &&
+              firstPossible[1] <= maxY
+            ) {
+              this._antinodes[firstPossible[0]] ||= new Set();
+              this._antinodes[firstPossible[0]].add(firstPossible[1])
+            }
+
+            if (
+              secondPossible[0] >= 0 &&
+              secondPossible[0] <= maxX &&
+              secondPossible[1] >= 0 &&
+              secondPossible[1] <= maxY
+            ) {
+              this._antinodes[secondPossible[0]] ||= new Set();
+              this._antinodes[secondPossible[0]].add(secondPossible[1])
+            }
+          }
+        }
+      }
+    });
+  }
+
+  printAntenna() {
+    Object.entries(this._antenna).forEach(([k, v]) => {
+      console.log(`${k}: ${v.map(l => `(${l[0]}, ${l[1]})`).join(',')}`)
+    });
+  }
+
+  countAntinodes() {
+    return Object.values(this._antinodes).reduce(
+      (acc, list) => { return acc + list.size; },
+      0,
+    );
   }
 }
 
