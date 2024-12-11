@@ -3,24 +3,6 @@ const { readFileSync } = require('node:fs');
 class Matrix {
   _data: string[][];
 
-  // Day 6
-  _curX: number;
-  _curY: number;
-  _dirX: number;
-  _dirY: number;
-  _spaces: { [key: number]: Set<number> };
-  _turns: {
-    [key: number]: {
-      [key: number]: {
-        [key: number] : Set<number>,
-      },
-    },
-  };
-
-  // Day 8
-  _antenna: { [key: string]: [number, number][] };
-  _antinodes: { [key: number]: Set<number> };
-
   constructor(day: number) {
     const input = readFileSync(
       `./inputs/day_${day}.txt`,
@@ -175,7 +157,20 @@ class Matrix {
   }
 
   // DAY 6
-  start() {
+  _curX: number;
+  _curY: number;
+  _dirX: number;
+  _dirY: number;
+  _spaces: { [key: number]: Set<number> };
+  _turns: {
+    [key: number]: {
+      [key: number]: {
+        [key: number] : Set<number>,
+      },
+    },
+  };
+
+  start6() {
     for(var y = 0; y < this._data.length; y++) {
       for (var x = 0; x < this._data[y].length; x++) {
         if (this._data[y][x] === '^') {
@@ -245,7 +240,7 @@ class Matrix {
   }
 
   createsCycle(y: number, x: number): boolean {
-    this.start();
+    this.start6();
 
     if (this._curX === x && this._curY === y) { return false; }
     if (this._data[y][x] === '#') { throw `Checked for cycle at existing barrier (${x}, ${y})` }
@@ -271,7 +266,7 @@ class Matrix {
   }
 
   numValidCycles() {
-    this.start();
+    this.start6();
     while(this.move()) {}
     const validSpaces = { ...this._spaces };
 
@@ -291,7 +286,10 @@ class Matrix {
   }
 
   // DAY 8
-  start2(method = 1) {
+  _antenna: { [key: string]: [number, number][] };
+  _antinodes: { [key: number]: Set<number> };
+
+  start8(method = 1) {
     this._antenna = {};
     this._antinodes = {};
     for (var y = 0; y < this._data.length; y++) {
@@ -383,6 +381,10 @@ class Matrix {
       0,
     );
   }
+
+  // Day 10
+
+
 }
 
 export { Matrix };

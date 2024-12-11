@@ -3,7 +3,7 @@ const { Matrix } = require('./lib/matrix');
 function part1() {
   const matrix = new Matrix(6);
 
-  matrix.start();
+  matrix.start6();
   while(matrix.move()) {}
   console.log(matrix.numSpaces());
 }
