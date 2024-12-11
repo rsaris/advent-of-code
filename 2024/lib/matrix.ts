@@ -383,8 +383,89 @@ class Matrix {
   }
 
   // Day 10
+  trailEnds(
+    height: number,
+    i: number,
+    j: number,
+    knownTrails: { [key: number]: Set<number> },
+  ) {
+    if (this._data[i][j] === '9') {
+      knownTrails[i] ||= new Set<number>();
+      knownTrails[i].add(j);
+      return;
+    }
 
+    if (i > 0 && parseInt(this._data[i - 1][j]) === height + 1) {
+      this.trailEnds(height + 1, i - 1, j, knownTrails);
+    }
 
+    if (i < this._data.length - 1 && parseInt(this._data[i + 1][j]) === height + 1) {
+      this.trailEnds(height + 1, i + 1, j, knownTrails);
+    }
+
+    if (j > 0 && parseInt(this._data[i][j - 1]) === height + 1) {
+      this.trailEnds(height + 1, i, j - 1, knownTrails);
+    }
+
+    if (j < this._data[i].length - 1 && parseInt(this._data[i][j + 1]) === height + 1) {
+      this.trailEnds(height + 1, i, j + 1, knownTrails);
+    }
+  }
+
+  countTrailEnds() {
+    var total = 0;
+    for (var i = 0; i < this._data.length; i++) {
+      for (var j = 0; j < this._data[i].length; j++) {
+        if (this._data[i][j] === '0') {
+          const knownTrails = {} as { [key: number]: Set<number> };
+          this.trailEnds(0, i, j, knownTrails)
+          total += Object.values(knownTrails).reduce(
+            (acc, list) => acc + list.size,
+            0,
+          );
+        }
+      }
+    }
+
+    return total;
+  }
+
+  validPaths(height: number, i: number, j: number) {
+    if (this._data[i][j] === '9') { return 1; }
+
+    var total = 0;
+
+    if (i > 0 && parseInt(this._data[i - 1][j]) === height + 1) {
+      total += this.validPaths(height + 1, i - 1, j);
+    }
+
+    if (i < this._data.length - 1 && parseInt(this._data[i + 1][j]) === height + 1) {
+      total += this.validPaths(height + 1, i + 1, j);
+    }
+
+    if (j > 0 && parseInt(this._data[i][j - 1]) === height + 1) {
+      total += this.validPaths(height + 1, i, j - 1);
+    }
+
+    if (j < this._data[i].length - 1 && parseInt(this._data[i][j + 1]) === height + 1) {
+      total += this.validPaths(height + 1, i, j + 1);
+    }
+
+    return total;
+  }
+
+  countPaths() {
+    var total = 0;
+    for (var i = 0; i < this._data.length; i++) {
+      for (var j = 0; j < this._data[i].length; j++) {
+        if (this._data[i][j] === '0') {
+          total += this.validPaths(0, i, j);
+        }
+      }
+    }
+
+    return total;
+  }
 }
 
 export { Matrix };
