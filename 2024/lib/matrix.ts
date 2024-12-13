@@ -3,9 +3,9 @@ const { readFileSync } = require('node:fs');
 class Matrix {
   _data: string[][];
 
-  constructor(day: number) {
+  constructor(day: number, debug = false) {
     const input = readFileSync(
-      `./inputs/day_${day}.txt`,
+      `./inputs/day_${day}.${debug ? 'debug.' : ''}txt`,
       { encoding: 'utf8', flag: 'r' },
     );
     this._data = input.split('\n').reduce(
@@ -465,6 +465,195 @@ class Matrix {
     }
 
     return total;
+  }
+
+  // DAY 12
+  _regions: [number, number][][];
+  _processedPlots: {
+    region: number,
+    corners: number,
+    fences: number,
+  }[][];
+
+  mergeRegion(first: number, second: number) {
+    const from = first < second ? second : first;
+    const to = first < second ? first : second;
+
+    if (this._regions[from] && from !== to) {
+      this._regions[from].forEach(plotPoint => {
+        this._regions[to].push(plotPoint);
+        this._processedPlots[plotPoint[0]][plotPoint[1]].region = to;
+      });
+      this._regions[from] = [];
+    }
+
+    return to;
+  }
+
+  processPlot(i: number, j: number) {
+    const plotLetter = this._data[i][j];
+    var fences = 0;
+    var corners = 0;
+    var region = this._regions.length; // Default to new region
+
+    var top = false;
+    var right = false;
+    var bottom = false;
+    var left = false;
+
+    if (j > 0) {
+      if (this._data[i][j - 1] === plotLetter) {
+        region = this.mergeRegion(
+          region,
+          this._processedPlots[i][j - 1].region,
+        );
+        left = true;
+      } else {
+        fences += 1;
+      }
+    } else {
+      fences += 1;
+    }
+
+    if (i > 0) {
+      if (this._data[i - 1][j] === plotLetter) {
+        region = this.mergeRegion(
+          region,
+          this._processedPlots[i - 1][j].region,
+        );
+        top = true;
+      } else {
+        fences += 1;
+      }
+    } else {
+      fences += 1;
+    }
+
+    if (j < this._data[i].length - 1) {
+      if (this._data[i][j + 1] === plotLetter) {
+        right = true;
+      } else {
+        fences += 1;
+      }
+    } else {
+      fences += 1;
+    }
+
+    if (i < this._data.length - 1) {
+      if (this._data[i + 1][j] === plotLetter) {
+        bottom = true;
+      } else {
+        fences += 1;
+      }
+    } else {
+      fences += 1;
+    }
+
+    if (!top && !right) {
+      corners++;
+    }
+    if (!right && !bottom) {
+      corners++;
+    }
+    if (!bottom && !left) {
+      corners++;
+    }
+    if (!left && !top) {
+      corners++;
+    }
+
+    if (top && right && this._data[i - 1][j + 1] !== plotLetter) {
+      corners++;
+    }
+
+    if (right && bottom && this._data[i + 1][j + 1] !== plotLetter) {
+      corners++;
+    }
+
+    if (bottom && left && this._data[i + 1][j - 1] !== plotLetter) {
+      corners++;
+    }
+
+    if (left && top && this._data[i - 1][j - 1] !== plotLetter) {
+      corners++;
+    }
+
+    this._regions[region] ||= [];
+    this._regions[region].push([i, j]);
+
+    this._processedPlots[i][j] = {
+      fences,
+      corners,
+      region,
+    }
+  }
+
+  countRegionFences(region: number) {
+    return this._regions[region].reduce(
+      (acc, plot) => acc + this._processedPlots[plot[0]][plot[1]].fences,
+      0,
+    )
+  }
+
+  countRegionCorners(region: number) {
+    return this._regions[region].reduce(
+      (acc, plot) => acc + this._processedPlots[plot[0]][plot[1]].corners,
+      0,
+    );
+  }
+
+  start12() {
+    this._regions = [];
+    this._processedPlots = [];
+
+    for (var i = 0; i < this._data.length; i++) {
+      this._processedPlots[i] ||= [];
+      for (var j = 0; j < this._data[i].length; j++) {
+        this.processPlot(i, j);
+      }
+    }
+  }
+
+  countFences() {
+    return this._regions.reduce(
+      (acc, plots, region) => {
+        return acc + plots.length * this.countRegionFences(region);
+      },
+      0,
+    );
+  }
+
+  countCorners() {
+    return this._regions.reduce(
+      (acc, plots, region) => {
+        return acc + plots.length * this.countRegionCorners(region);
+      },
+      0,
+    );
+  }
+
+  printRegions() {
+    this._regions.forEach((plots, i) => {
+      if (plots.length) {
+        console.log(`[REGION ${i}]: ${plots.length} length`);
+        console.log(`[REGION ${i}]: ${this.countRegionFences(i)}`);
+        console.log(`[REGION ${i}]: ${plots.map(plot => `(${plot[0]}, ${plot[1]})`).join(', ')}`);
+      } else {
+        console.log(`[IGNORE] No plots found for region ${i}`);
+      }
+    })
+  }
+
+  printPlots() {
+    console.log(
+      this._processedPlots.map(
+        (plots, i) => plots.map(
+          (plot, j) => (
+            '00000' + plot.region + this._data[i][j] + plot.fences
+          ).slice(-4)
+        ).join('*'),
+      ).join('\n'),
+    );
   }
 }
 
