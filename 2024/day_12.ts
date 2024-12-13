@@ -15,4 +15,4 @@ function part2() {
 }
 
 part1(); // 1486324
-part2();
+part2(); // 898684

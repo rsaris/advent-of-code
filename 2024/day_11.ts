@@ -54,5 +54,5 @@ function part2() {
   console.log(total);
 }
 
-part1();
-part2();
+part1(); // 212655
+part2(); // 253582809724830
