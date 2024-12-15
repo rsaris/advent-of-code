@@ -75,6 +75,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prompt-sync@npm:^4":
+  version: 4.2.3
+  resolution: "@types/prompt-sync@npm:4.2.3"
+  checksum: 10c0/e787a2d99938eba1dbdf94534c9777e0b45aac8aa099364467f576e07b1667b9bf3b3fda7b47333903dee62924174d3d8c0df0c34f371e4c70321fd6966a9840
+  languageName: node
+  linkType: hard
+
 "acorn-walk@npm:^8.1.1":
   version: 8.3.4
   resolution: "acorn-walk@npm:8.3.4"
@@ -90,6 +97,13 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: 10c0/6d4ee461a7734b2f48836ee0fbb752903606e576cc100eb49340295129ca0b452f3ba91ddd4424a1d4406a98adfb2ebb6bd0ff4c49d7a0930c10e462719bbfd7
+  languageName: node
+  linkType: hard
+
+"ansi-regex@npm:^4.1.0":
+  version: 4.1.1
+  resolution: "ansi-regex@npm:4.1.1"
+  checksum: 10c0/d36d34234d077e8770169d980fed7b2f3724bfa2a01da150ccd75ef9707c80e883d27cdf7a0eac2f145ac1d10a785a8a855cffd05b85f778629a0db62e7033da
   languageName: node
   linkType: hard
 
@@ -121,15 +135,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prompt-sync@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "prompt-sync@npm:4.2.0"
+  dependencies:
+    strip-ansi: "npm:^5.0.0"
+  checksum: 10c0/1312154b8d84c7487b734afdc5d9f7e092ac7a3a303aec8dfd3ba680502374f5942ca501943c6314ae77979aa4dcd3c6cd03db5da6ac7e4531d384c9740261ad
+  languageName: node
+  linkType: hard
+
 "root-workspace-0b6124@workspace:.":
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@types/node": "npm:^22.10.1"
+    "@types/prompt-sync": "npm:^4"
+    prompt-sync: "npm:^4.2.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.2"
   languageName: unknown
   linkType: soft
+
+"strip-ansi@npm:^5.0.0":
+  version: 5.2.0
+  resolution: "strip-ansi@npm:5.2.0"
+  dependencies:
+    ansi-regex: "npm:^4.1.0"
+  checksum: 10c0/de4658c8a097ce3b15955bc6008f67c0790f85748bdc025b7bc8c52c7aee94bc4f9e50624516150ed173c3db72d851826cd57e7a85fe4e4bb6dbbebd5d297fdf
+  languageName: node
+  linkType: hard
 
 "ts-node@npm:^10.9.2":
   version: 10.9.2
