@@ -655,6 +655,81 @@ class Matrix {
       ).join('\n'),
     );
   }
+
+  // Day 16
+  _start: { i: number, j: number };
+  _paths: [{ }]
+
+  start16() {
+    for (var i = 0; i < this._data.length; i++) {
+      for (var j = 0; j < this._data[i].length; j++) {
+        if (this._data[i][j] === 'S') {
+          this._start = { i, j };
+          return this._start;
+        }
+      }
+    }
+
+    return
+  }
+
+  numRotations(from: string, to: string) {
+    if (from === to) { return 0; }
+    if (
+      (from === 'N' && to === 'S') ||
+      (from === 'S' && to === 'N') ||
+      (from === 'E' && to === 'W') ||
+      (from === 'W' && to === 'E')
+    ) { return 2; }
+
+    return 1;
+  }
+
+  findPaths(start: { i: number, j: number }, dir: string, visits: boolean[][]): {
+    i: number,
+    j: number,
+    rotate: number,
+    next: { i: number, j: number, rotate: number, next: {}[] }[],
+  }[]{
+    const paths = [];
+    if (start.i - 1 >= 0 && this._data[start.i - 1][start.j] === '.') {
+      paths.push({
+        ...start,
+        rotate: this.numRotations(dir, 'N'),
+        next: this.findPaths(
+          { i: start.i - 1, j: start.j},
+          'N',
+          visits,
+        ),
+      });
+    }
+
+    if (start.i + 1 < this._data.length && this._data[start.i + 1][start.j] === '.') {
+      paths.push({
+        ...start,
+        rotate: this.numRotations(dir, 'S'),
+        next: this.findPaths({ i: start.i + 1, j: start.j}, 'S', cache),
+      });
+    }
+
+    if (start.j - 1 >= 0 && this._data[start.i][start.j - 1] === '.') {
+      paths.push({
+        ...start,
+        rotate: this.numRotations(dir, 'W'),
+        next: this.findPaths({ i: start.i, j: start.j - 1}, 'W', cache),
+      });
+    }
+
+    if (start.j + 1 < this._data[start.i].length && this._data[start.i][start.j + 1] === '.') {
+      paths.push({
+        ...start,
+        rotate: this.numRotations(dir, 'E'),
+        next: this.findPaths({ i: start.i, j: start.j + 1}, 'E', cache),
+      });
+    }
+
+    return paths;
+  }
 }
 
 export { Matrix };
